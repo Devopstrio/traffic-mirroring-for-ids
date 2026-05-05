@@ -137,6 +137,14 @@ graph LR
     Enc -->|UDP 4789| Dest
 ```
 
+**VXLAN Encapsulation Header:**
+```mermaid
+graph TD
+    UDP[UDP Header: Port 4789] --> VXLAN[VXLAN Header: VNI 1001]
+    VXLAN --> Inner[Inner Ethernet Frame]
+    Inner --> IP[Inner IP Payload]
+```
+
 **IDS Inspection Pipeline:**
 ```mermaid
 graph TD
@@ -189,6 +197,15 @@ graph LR
     Filter -->|Internal RPC| Drop[Ignore]
 ```
 
+**Mirror Filter Logic:**
+```mermaid
+graph TD
+    P[Packet] --> Proto{Protocol?}
+    Proto -->|TCP| Port{Destination Port?}
+    Port -->|80/443| Accept[Mirror]
+    Port -->|Other| Reject[Drop Mirror]
+```
+
 **Threat Alert Lifecycle:**
 ```mermaid
 graph LR
@@ -221,8 +238,22 @@ graph LR
 ### 7. Institutional Visibility Maturity Scorecard (SOC Dashboard)
 Grading organizational performance based on key indicators: Detection Latency, Threat Capture Index, and Visibility Adoption Scores across all business units.
 
+```mermaid
+graph TD
+    Blind[Blind Spot Mapping] --> Map[Heatmap Generation]
+    Map --> Strategy[Coverage Expansion Plan]
+```
+
 ### 8. Identity & RBAC for Visibility Governance
 Managing fine-grained access to inspection hubs and alert metadata between Security Teams, Incident Responders, and automated SIEM principals.
+
+```mermaid
+graph LR
+    User[Analyst] --> Role[IAM Role: ReadOnly]
+    Admin[Admin] --> RoleAdmin[IAM Role: FullAccess]
+    Role --> Mirror[View Mirror Config]
+    RoleAdmin --> Mirror
+```
 
 ### 9. IaC Deployment: Mirroring-as-Code Framework
 Using modular Terraform pipelines to deploy and manage the versioned distribution of mirroring filters, sessions, and inspection load balancers.
@@ -238,8 +269,36 @@ graph TD
 ### 10. AIOps Visibility Drift & Risk Validation Flow
 Using advanced analytics to identify sudden surges in traffic throughput, unauthorized filter changes, or unusual delivery pattern changes that could result in institutional risk or visibility failure.
 
+```mermaid
+graph TD
+    Volume[Packet Volume Spike] --> Alert[Throughput Threshold]
+    Alert --> Scale[Auto-Scale IDS Nodes]
+```
+
+**Filter Drift Remediation:**
+```mermaid
+graph LR
+    Scan[Hourly Scan] --> Match[Baseline Comparison]
+    Match -->|Drift| Revert[Apply TF State]
+```
+
 ### 11. Metadata Lake for Forensic Visibility Audit
 Storing long-term records of every mirroring integration event (metadata), every detection executed, and every raw PCAP stream for institutional record-keeping and forensic analysis.
+
+```mermaid
+graph LR
+    Vault[Vault Events] -->|JSON Stream| Splunk[Splunk / ELK]
+    Vault -->|Metric Stream| Grafana[Grafana Dashboards]
+    Splunk -->|Alert| SOC[Security Ops Center]
+```
+
+**Forensic Data Retention:**
+```mermaid
+graph TD
+    Live[Live PCAP] --> 30d[Hot: 30 Days]
+    30d --> 1y[Cold: 1 Year (GLACIER)]
+    1y --> Purge[Automated Purge]
+```
 
 ---
 
