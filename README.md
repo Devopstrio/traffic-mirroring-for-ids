@@ -33,50 +33,50 @@ This platform provides the **Network Threat Visibility Plane**. It implements a 
 This diagram illustrates the high-level relationship between the Source Workload Zone, the Traffic Mirroring Orchestrator, and the Centralized Inspection Hub. It defines the bridge between network traffic and real-time security intelligence.
 
 ```mermaid
-graph LR
+flowchart LR
     %% Subgraph Definitions
     subgraph SourceZone["Source Workload Zone"]
         direction TB
-        App1[App Instance A]
-        App2[App Instance B]
-        ENI1[Source ENI]
-        ENI2[Source ENI]
+        App1["App Instance A"]
+        App2["App Instance B"]
+        ENI1["Source ENI"]
+        ENI2["Source ENI"]
     end
 
     subgraph MirrorOrchestration["Traffic Mirroring Orchestrator"]
         direction TB
-        Session[Mirror Session]
-        Filter[Protocol/Port Filter]
-        Target[Mirror Target (NLB)]
+        Session["Mirror Session"]
+        Filter["Protocol/Port Filter"]
+        Target["Mirror Target (NLB)"]
     end
 
     subgraph InspectionVPC["Centralized Inspection VPC (Hub)"]
         direction TB
-        IDSFleet[Auto-Scaling IDS Fleet]
-        Suricata[Suricata / Zeek Engine]
-        PCAP[Forensic PCAP Writer]
+        IDSFleet["Auto-Scaling IDS Fleet"]
+        Suricata["Suricata / Zeek Engine"]
+        PCAP["Forensic PCAP Writer"]
     end
 
     subgraph IntelligencePlane["Security Intelligence Plane"]
         direction TB
-        API[FastAPI Security Gateway]
-        Engine[Anomaly Detection Hub]
-        AlertHub[Alert Orchestrator]
-        DB[(Postgres: Forensic DB)]
+        API["FastAPI Security Gateway"]
+        Engine["Anomaly Detection Hub"]
+        AlertHub["Alert Orchestrator"]
+        DB[("Postgres: Forensic DB")]
     end
 
     subgraph SOC["Security Operations Center"]
         direction TB
-        Dash[Real-time SOC Dashboard]
-        SIEM[SIEM / Splunk Integration]
-        Notify[Slack / PagerDuty Alerts]
+        Dash["Real-time SOC Dashboard"]
+        SIEM["SIEM / Splunk Integration"]
+        Notify["Slack / PagerDuty Alerts"]
     end
 
     subgraph DevOps["DevOps & IaC Automation"]
         direction TB
-        GH[GitHub Actions]
-        TF[Terraform Mirroring Modules]
-        Policy[Azure/AWS Network Policy]
+        GH["GitHub Actions"]
+        TF["Terraform Mirroring Modules"]
+        Policy["Azure/AWS Network Policy"]
     end
 
     %% Flow Arrows
@@ -121,15 +121,15 @@ graph LR
 The continuous path of a network packet from source ENI capture and VXLAN encapsulation to real-time signature matching and heuristic anomaly detection. This ensures zero-interruption operations through dependency-aware traffic flows.
 
 ```mermaid
-graph LR
+flowchart LR
     subgraph Production["Production Flow"]
-        S[Client] -->|TCP/HTTP| D[Server]
+        S["Client"] -->|TCP/HTTP| D["Server"]
     end
 
     subgraph Mirroring["Mirroring Flow"]
-        Tap[Virtual TAP / ENI Mirror]
-        Enc[VXLAN Encapsulator]
-        Dest[IDS Inspection Target]
+        Tap["Virtual TAP / ENI Mirror"]
+        Enc["VXLAN Encapsulator"]
+        Dest["IDS Inspection Target"]
     end
 
     S --- Tap
@@ -139,37 +139,37 @@ graph LR
 
 **VXLAN Encapsulation Header:**
 ```mermaid
-graph TD
-    UDP[UDP Header: Port 4789] --> VXLAN[VXLAN Header: VNI 1001]
-    VXLAN --> Inner[Inner Ethernet Frame]
-    Inner --> IP[Inner IP Payload]
+flowchart TD
+    UDP["UDP Header: Port 4789"] --> VXLAN["VXLAN Header: VNI 1001"]
+    VXLAN["VXLAN Header: VNI 1001"] --> Inner["Inner Ethernet Frame"]
+    Inner["Inner Ethernet Frame"] --> IP["Inner IP Payload"]
 ```
 
 **IDS Inspection Pipeline:**
 ```mermaid
-graph TD
-    Capture[Packet Capture] --> Decap[VXLAN Decapsulation]
-    Decap --> Protocol[Protocol Identification]
-    Protocol --> Signature{Signature Match?}
-    Signature -->|Yes| Alert[Generate High-Severity Alert]
-    Signature -->|No| Heuristic{Heuristic Anomaly?}
-    Heuristic -->|Yes| Alert
-    Heuristic -->|No| Flow[Record Flow Metadata]
+flowchart TD
+    Capture["Packet Capture"] --> Decap["VXLAN Decapsulation"]
+    Decap["VXLAN Decapsulation"] --> Protocol["Protocol Identification"]
+    Protocol["Protocol Identification"] --> Signature{"Signature Match?"}
+    Signature{"Signature Match?"} -->|Yes| Alert["Generate High-Severity Alert"]
+    Signature{"Signature Match?"} -->|No| Heuristic{"Heuristic Anomaly?"}
+    Heuristic{"Heuristic Anomaly?"} -->|Yes| Alert
+    Heuristic{"Heuristic Anomaly?"} -->|No| Flow["Record Flow Metadata"]
 ```
 
 ### 3. Distributed Visibility Topology (Hub-and-Spoke & Scaling)
 Strategically orchestrating standardized inspection across global regions and multi-tenant VPCs (Finance, Retail), providing a unified institutional view of network threat surfaces.
 
 ```mermaid
-graph TD
+flowchart TD
     subgraph Spoke1["BU Finance VPC"]
-        F1[Workload]
+        F1["Workload"]
     end
     subgraph Spoke2["BU Retail VPC"]
-        R1[Workload]
+        R1["Workload"]
     end
     subgraph Hub["Security Hub VPC"]
-        IDS[Central IDS Pool]
+        IDS["Central IDS Pool"]
     end
 
     F1 -->|TGW/Peering Mirror| IDS
@@ -178,126 +178,126 @@ graph TD
 
 **Auto-Scaling IDS Fleet:**
 ```mermaid
-graph LR
-    MirrorStream[Mirror Traffic] --> NLB[Network Load Balancer]
-    NLB --> Node1[IDS Node A]
-    NLB --> Node2[IDS Node B]
-    NLB --> Node3[IDS Node C]
-    ASG[Auto Scaling Group] -.->|Manages| NLB
+flowchart LR
+    MirrorStream["Mirror Traffic"] --> NLB["Network Load Balancer"]
+    NLB["Network Load Balancer"] --> Node1["IDS Node A"]
+    NLB["Network Load Balancer"] --> Node2["IDS Node B"]
+    NLB["Network Load Balancer"] --> Node3["IDS Node C"]
+    ASG["Auto Scaling Group"] -.->|Manages| NLB
 ```
 
 ### 4. Governance Hub & Alert Control Plane
 Executing complex logic for securing the bridge between network traffic and the SOC, ensuring every mirror filter is optimized, detections are enriched, and alerts are dispatched to the SIEM.
 
 ```mermaid
-graph LR
-    Traffic[All Network Traffic] --> Filter{Mirror Filter}
-    Filter -->|Port 80/443| Mirror[Mirror to IDS]
-    Filter -->|Port 22/3389| Mirror
-    Filter -->|Internal RPC| Drop[Ignore]
+flowchart LR
+    Traffic["All Network Traffic"] --> Filter{"Mirror Filter"}
+    Filter{"Mirror Filter"} -->|Port 80/443| Mirror["Mirror to IDS"]
+    Filter{"Mirror Filter"} -->|Port 22/3389| Mirror
+    Filter{"Mirror Filter"} -->|Internal RPC| Drop["Ignore"]
 ```
 
 **Mirror Filter Logic:**
 ```mermaid
-graph TD
-    P[Packet] --> Proto{Protocol?}
-    Proto -->|TCP| Port{Destination Port?}
-    Port -->|80/443| Accept[Mirror]
-    Port -->|Other| Reject[Drop Mirror]
+flowchart TD
+    P["Packet"] --> Proto{"Protocol?"}
+    Proto{"Protocol?"} -->|TCP| Port{"Destination Port?"}
+    Port{"Destination Port?"} -->|80/443| Accept["Mirror"]
+    Port{"Destination Port?"} -->|Other| Reject["Drop Mirror"]
 ```
 
 **Threat Alert Lifecycle:**
 ```mermaid
-graph LR
-    Detect[Detection] --> Queue[Event Queue]
-    Queue --> Enrich[Asset Enrichment]
-    Enrich --> Notify[Slack / Email]
-    Enrich --> SIEM[Splunk / Sentinel]
+flowchart LR
+    Detect["Detection"] --> Queue["Event Queue"]
+    Queue["Event Queue"] --> Enrich["Asset Enrichment"]
+    Enrich["Asset Enrichment"] --> Notify["Slack / Email"]
+    Enrich["Asset Enrichment"] --> SIEM["Splunk / Sentinel"]
 ```
 
 ### 5. Multi-Cloud Visibility Federation (Global SOC)
 Automatically managing unified visibility standards across global regions (US, EU, Asia) and diverse cloud tenants, ensuring institutional data residency and privacy boundaries by default.
 
 ```mermaid
-graph LR
-    US[US-East Monitoring] --> Dashboard[Unified SOC Dashboard]
-    EU[EU-West Monitoring] --> Dashboard
-    Asia[Asia-South Monitoring] --> Dashboard
+flowchart LR
+    US["US-East Monitoring"] --> Dashboard["Unified SOC Dashboard"]
+    EU["EU-West Monitoring"] --> Dashboard["Unified SOC Dashboard"]
+    Asia["Asia-South Monitoring"] --> Dashboard["Unified SOC Dashboard"]
 ```
 
 ### 6. Encryption & Perimeter Protection Flow (Forensic Analysis)
 Managing the lifecycle of a packet capture, automatically enforcing institutional S3 object locking and encryption standards as required by security policy, ensuring zero-latency evidence confidence.
 
 ```mermaid
-graph LR
-    IDS[IDS Node] -->|Stream| Writer[PCAP Writer]
-    Writer -->|Multipart Upload| S3[S3 / Blob Storage]
-    S3 -->|Object Lock| Compliance[WORM Audit Trail]
+flowchart LR
+    IDS["IDS Node"] -->|Stream| Writer["PCAP Writer"]
+    Writer["PCAP Writer"] -->|Multipart Upload| S3["S3 / Blob Storage"]
+    S3["S3 / Blob Storage"] -->|Object Lock| Compliance["WORM Audit Trail"]
 ```
 
 ### 7. Institutional Visibility Maturity Scorecard (SOC Dashboard)
 Grading organizational performance based on key indicators: Detection Latency, Threat Capture Index, and Visibility Adoption Scores across all business units.
 
 ```mermaid
-graph TD
-    Blind[Blind Spot Mapping] --> Map[Heatmap Generation]
-    Map --> Strategy[Coverage Expansion Plan]
+flowchart TD
+    Blind["Blind Spot Mapping"] --> Map["Heatmap Generation"]
+    Map["Heatmap Generation"] --> Strategy["Coverage Expansion Plan"]
 ```
 
 ### 8. Identity & RBAC for Visibility Governance
 Managing fine-grained access to inspection hubs and alert metadata between Security Teams, Incident Responders, and automated SIEM principals.
 
 ```mermaid
-graph LR
-    User[Analyst] --> Role[IAM Role: ReadOnly]
-    Admin[Admin] --> RoleAdmin[IAM Role: FullAccess]
-    Role --> Mirror[View Mirror Config]
-    RoleAdmin --> Mirror
+flowchart LR
+    User["Analyst"] --> Role["IAM Role: ReadOnly"]
+    Admin["Admin"] --> RoleAdmin["IAM Role: FullAccess"]
+    Role["IAM Role: ReadOnly"] --> Mirror["View Mirror Config"]
+    RoleAdmin["IAM Role: FullAccess"] --> Mirror["View Mirror Config"]
 ```
 
 ### 9. IaC Deployment: Mirroring-as-Code Framework
 Using modular Terraform pipelines to deploy and manage the versioned distribution of mirroring filters, sessions, and inspection load balancers.
 
 ```mermaid
-graph TD
-    TF[Terraform] --> Filter[Mirror Filters]
-    TF --> Target[Mirror Targets]
-    TF --> Session[Mirror Sessions]
-    Session -.->|Monitors| ENI[Workload ENIs]
+flowchart TD
+    TF["Terraform"] --> Filter["Mirror Filters"]
+    TF["Terraform"] --> Target["Mirror Targets"]
+    TF["Terraform"] --> Session["Mirror Sessions"]
+    Session["Mirror Sessions"] -.->|Monitors| ENI["Workload ENIs"]
 ```
 
 ### 10. AIOps Visibility Drift & Risk Validation Flow
 Using advanced analytics to identify sudden surges in traffic throughput, unauthorized filter changes, or unusual delivery pattern changes that could result in institutional risk or visibility failure.
 
 ```mermaid
-graph TD
-    Volume[Packet Volume Spike] --> Alert[Throughput Threshold]
-    Alert --> Scale[Auto-Scale IDS Nodes]
+flowchart TD
+    Volume["Packet Volume Spike"] --> Alert["Throughput Threshold"]
+    Alert["Throughput Threshold"] --> Scale["Auto-Scale IDS Nodes"]
 ```
 
 **Filter Drift Remediation:**
 ```mermaid
-graph LR
-    Scan[Hourly Scan] --> Match[Baseline Comparison]
-    Match -->|Drift| Revert[Apply TF State]
+flowchart LR
+    Scan["Hourly Scan"] --> Match["Baseline Comparison"]
+    Match["Baseline Comparison"] -->|Drift| Revert["Apply TF State"]
 ```
 
 ### 11. Metadata Lake for Forensic Visibility Audit
 Storing long-term records of every mirroring integration event (metadata), every detection executed, and every raw PCAP stream for institutional record-keeping and forensic analysis.
 
 ```mermaid
-graph LR
-    Vault[Vault Events] -->|JSON Stream| Splunk[Splunk / ELK]
-    Vault -->|Metric Stream| Grafana[Grafana Dashboards]
-    Splunk -->|Alert| SOC[Security Ops Center]
+flowchart LR
+    Vault["Vault Events"] -->|JSON Stream| Splunk["Splunk / ELK"]
+    Vault["Vault Events"] -->|Metric Stream| Grafana["Grafana Dashboards"]
+    Splunk["Splunk / ELK"] -->|Alert| SOC["Security Ops Center"]
 ```
 
 **Forensic Data Retention:**
 ```mermaid
-graph TD
-    Live[Live PCAP] --> 30d[Hot: 30 Days]
-    30d --> 1y[Cold: 1 Year (GLACIER)]
-    1y --> Purge[Automated Purge]
+flowchart TD
+    Live["Live PCAP"] --> 30d["Hot: 30 Days"]
+    30d["Hot: 30 Days"] --> 1y["Cold: 1 Year (GLACIER)"]
+    1y["Cold: 1 Year (GLACIER)"] --> Purge["Automated Purge"]
 ```
 
 ---
